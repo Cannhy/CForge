@@ -1,0 +1,39 @@
+models:
+  doubao:
+    default: Doubao-1.5-pro-32k
+    variants:
+      - name: Doubao-1.5-pro-32k
+        endpoint: ep
+      - name: Doubao-1.5-pro-256k
+        endpoint: ep
+  qwen:
+    default: qwen-7b-chat
+    variants:
+      - name: qwen-7b-chat
+      - name: qwen-14b-chat
+  deepseek:
+    default: deepseek-coder-6.7b
+    variants:
+      - name: deepseek-coder-6.7b
+      - name: deepseek-llm-7b
+  glm:
+    default: chatglm3-6b
+    variants:
+      - name: chatglm3-6b
+      - name: chatglm2-6b
+
+active_model:
+  series: doubao
+  model_name: Doubao-1.5-pro-256k
+
+dataset:
+  src_path: path
+  output: path
+  backup: path
+  retry: path
+
+translation:
+  few_shot_examples: 8
+  n_workers: 1
+  retry_cnt: 2
+  temperature: 0.2

@@ -1,0 +1,13 @@
+zhipuai~=2.1.5.20250421
+datasets~=3.3.2
+attrs~=25.3.0
+tqdm~=4.67.1
+pebble~=5.1.1
+openai~=1.84.0
+numpy~=2.2.6
+bleach~=6.2.0
+pyyaml~=6.0.2
+jinja2~=3.1.6
+scipy~=1.15.3
+huggingface-hub~=0.32.4
+protobuf~=5.29.4

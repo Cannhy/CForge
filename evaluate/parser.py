@@ -1,0 +1,185 @@
+import os
+import argparse
+
+from evaluate.utils.scenarios import Scenario
+
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--benchmark",
+        type=str,
+        default="medium",
+        help=(
+            "CForge difficulty tier to evaluate on. "
+            "One of: introductory, easy, medium, hard. "
+        ),
+    )
+    parser.add_argument(
+        "--scenario",
+        type=Scenario,
+        default=Scenario.codegeneration,
+        help="Type of scenario to run",
+    )
+    parser.add_argument(
+        "--n_shot",
+        type=int,
+        default=0,
+        help="Type of scenario to run",
+    )
+    parser.add_argument(
+        "--model",
+        type=str,
+        default="Qwen2.5-Coder-7B",
+        help="Name of the model to use matching `llm_styles.py`",
+    )
+    parser.add_argument(
+        "--local_model_path",
+        type=str,
+        default="",
+        help="If you have a local model, specify it here in conjunction with --model",
+    )
+    parser.add_argument(
+        "--trust_remote_code",
+        action="store_true",
+        default=True,
+        help="trust_remote_code option used in huggingface models",
+    )
+    parser.add_argument(
+        "--is_test_correctness",
+        action="store_true",
+        default=True,
+        help="is test pass@k",
+    )
+    parser.add_argument(
+        "--is_test_safety",
+        action="store_true",
+        default=True,
+        help="is test mem_safe",
+    )
+    parser.add_argument(
+        "--not_fast",
+        action="store_true",
+        default=True,
+        help="whether to use full set of tests (slower and more memory intensive evaluation)",
+    )
+    parser.add_argument(
+        "--release_version",
+        type=str,
+        default="release_latest",
+        help="whether to use full set of tests (slower and more memory intensive evaluation)",
+    )
+    parser.add_argument(
+        "--n", type=int, default=10, help="Number of samples to generate, 10 is normal"
+    )
+    parser.add_argument(
+        "--codegen_n",
+        type=int,
+        default=10,
+        help="Number of samples for which code generation was run (used to map the code generation file during self-repair)",
+    )
+    parser.add_argument(
+        "--temperature", type=float, default=0.2, help="Temperature for sampling"
+    )
+    parser.add_argument("--top_p", type=float, default=0.95, help="Top p for sampling")
+    parser.add_argument(
+        "--max_tokens", type=int, default=2048, help="Max tokens for sampling"
+    )
+    parser.add_argument(
+        "--multiprocess",
+        default=10,
+        type=int,
+        help="Number of processes to use for generation (vllm runs do not use this)",
+    )
+    parser.add_argument(
+        "--stop",
+        default="###",
+        type=str,
+        help="Stop token (use `,` to separate multiple tokens)",
+    )
+    parser.add_argument("--continue_existing", default=True, action="store_true")
+    parser.add_argument("--continue_existing_with_eval", default=True, action="store_true")
+    parser.add_argument(
+        "--use_cache", default=False, action="store_true", help="Use cache for generation"
+    )
+    parser.add_argument(
+        "--cache_batch_size", type=int, default=100, help="Batch size for caching"
+    )
+    parser.add_argument("--debug", action="store_true", help="Debug mode")
+    parser.add_argument("--evaluate", action="store_true", help="Evaluate the results")
+    parser.add_argument(
+        "--num_process_evaluate",
+        type=int,
+        default=120,
+        help="Number of processes to use for evaluation",
+    )
+    parser.add_argument("--timeout", type=int, default=5, help="Timeout for evaluation")
+    parser.add_argument(
+        "--openai_timeout", type=int, default=90, help="Timeout for requests to OpenAI"
+    )
+    parser.add_argument(
+        "--tensor_parallel_size",
+        type=int,
+        default=2,
+        help="Tensor parallel size for vllm",
+    )
+    parser.add_argument(
+        "--enable_prefix_caching",
+        action="store_true",
+        help="Enable prefix caching for vllm",
+    )
+    parser.add_argument(
+        "--custom_output_file",
+        type=str,
+        default=None,
+        help="Path to the custom output file used in `custom_evaluator.py`",
+    )
+    parser.add_argument(
+        "--custom_output_save_name",
+        type=str,
+        default=None,
+        help="Folder name to save the custom output results (output file folder modified if None)",
+    )
+    parser.add_argument("--dtype", type=str, default="bfloat16", help="Dtype for vllm")
+    parser.add_argument(
+        "--luban_model_name",
+        type=str,
+        default="",
+        help="Model name to forward to the Luban proxy endpoint (if using LubanAPI)",
+    )
+    # Added to avoid running extra generations (it's slow for reasoning models)
+    parser.add_argument(
+        "--start_date",
+        type=str,
+        default=None,
+        help="Start date for the contest to filter the evaluation file (format - YYYY-MM-DD)",
+    )
+    parser.add_argument(
+        "--end_date",
+        type=str,
+        default=None,
+        help="End date for the contest to filter the evaluation file (format - YYYY-MM-DD)",
+    )
+
+    args = parser.parse_args()
+
+    args.stop = args.stop.split(",")
+
+    if args.benchmark not in {"introductory", "easy", "medium", "hard"}:
+        raise ValueError(
+            f"Unknown --benchmark={args.benchmark!r}; "
+            f"expected one of introductory/easy/medium/hard."
+        )
+
+    if args.multiprocess == -1:
+        args.multiprocess = os.cpu_count()
+
+    return args
+
+
+def test():
+    args = get_args()
+    print(args)
+
+
+if __name__ == "__main__":
+    test()

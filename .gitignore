@@ -1,0 +1,40 @@
+# 默认忽略的文件
+/shelf/
+/.idea/workspace.xml
+# 基于编辑器的 HTTP 客户端请求
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+/.idea/
+
+/iteration_translation/datasets
+/iteration_translation/logs
+# Environment files — never commit real credentials
+.env
+.env.local
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs & local run output
+logs/
+*.log
+output/
+cache/
+
+# Local model / checkpoint mirrors
+models/
+
+# HuggingFace cache
+.cache/
+**/.cache/
