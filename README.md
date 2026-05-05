@@ -4,6 +4,7 @@
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
+[![ModelScope Dataset](https://img.shields.io/badge/ModelScope-cannhy%2FCForge-624aff)](https://www.modelscope.cn/datasets/cannhy/CForge)
 [![HF Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20Dataset-cannhy%2FCForge-yellow)](https://huggingface.co/datasets/cannhy/CForge)
 
 CForge is a unified C code-generation benchmark with a sandboxed evaluator that compiles each generation with `gcc`, runs the test cases, and (in parallel) audits memory behaviour with `valgrind`. CForge is organised into four difficulty tiers:
@@ -123,7 +124,7 @@ python -m evaluate.generate_evaluate \
 
 What happens:
 
-1. Loads the **CForge-Medium** split (downloads from [`cannhy/CForge`](https://huggingface.co/datasets/cannhy/CForge) on HuggingFace; falls back to the local mirror at `CForge_data/` if offline).
+1. Loads the **CForge-Medium** split (downloads from [`cannhy/CForge`](https://www.modelscope.cn/datasets/cannhy/CForge) on ModelScope — also mirrored on [HuggingFace](https://huggingface.co/datasets/cannhy/CForge); falls back to the local mirror at `CForge_data/` if offline).
 2. Spawns 20 concurrent worker threads; for each problem, schedules `n=10` independent API calls.
 3. **Every sample is appended to disk the moment it completes** (`output/<model>/<tier>/...jsonl`).
 4. After generation finishes, runs `gcc + test cases` and `valgrind` in parallel for every sample.
@@ -190,13 +191,19 @@ That's it — all CLI flags work automatically.
 
 ## Datasets
 
-CForge is published on the HuggingFace Hub:
-👉 **[`cannhy/CForge`](https://huggingface.co/datasets/cannhy/CForge)**
+CForge is published on both ModelScope and HuggingFace:
+- 🪄 ModelScope: **[`cannhy/CForge`](https://www.modelscope.cn/datasets/cannhy/CForge)**
+- 🤗 HuggingFace: **[`cannhy/CForge`](https://huggingface.co/datasets/cannhy/CForge)**
 
 ```python
-from datasets import load_dataset
+# ModelScope
+from modelscope.msdatasets import MsDataset
+# subset_name can be one of: introductory / easy / medium / hard
+ds = MsDataset.load("cannhy/CForge", subset_name="medium", split="test")
+print(len(ds), next(iter(ds)))
 
-# config can be one of: introductory / easy / medium / hard
+# HuggingFace
+from datasets import load_dataset
 ds = load_dataset("cannhy/CForge", "medium", split="test")
 print(len(ds), ds[0])
 ```
